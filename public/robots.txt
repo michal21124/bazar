@@ -1,0 +1,54 @@
+# robots.txt — Autobazar Platinum Cars
+# https://platinumcars.cz
+
+# ── Obecná pravidla ────────────────────────────────────────────────────────────
+User-agent: *
+Allow: /
+Disallow: /admin
+
+# ── Google ─────────────────────────────────────────────────────────────────────
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+
+User-agent: Googlebot-Image
+Allow: /
+
+# ── Microsoft / Bing ───────────────────────────────────────────────────────────
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+# ── AI vyhledávače a asistenti (lepší viditelnost v AI odpovědích) ─────────────
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Gemini-Bot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+# ── Sitemap ────────────────────────────────────────────────────────────────────
+Sitemap: https://platinumcars.cz/sitemap.xml
