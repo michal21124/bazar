@@ -77,6 +77,74 @@ function compressFile(file: File): Promise<string> {
   });
 }
 
+// ─── Autocomplete data ────────────────────────────────────────────────────────
+
+const CAR_BRANDS = [
+  'Alfa Romeo','Audi','BMW','Citroën','Dacia','Fiat','Ford','Honda',
+  'Hyundai','Infiniti','Jaguar','Jeep','Kia','Land Rover','Lexus',
+  'Mazda','Mercedes-Benz','Mitsubishi','Nissan','Opel','Peugeot',
+  'Porsche','Renault','Saab','Seat','Škoda','Subaru','Suzuki',
+  'Toyota','Volkswagen','Volvo',
+];
+
+const CAR_MODELS: Record<string, string[]> = {
+  'Škoda':        ['Octavia','Fabia','Superb','Kodiaq','Karoq','Kamiq','Scala','Enyaq'],
+  'Volkswagen':   ['Golf','Passat','Tiguan','Polo','T-Roc','T-Cross','Touareg','Arteon','ID.4'],
+  'BMW':          ['Řada 1','Řada 2','Řada 3','Řada 4','Řada 5','X1','X3','X5','iX3'],
+  'Audi':         ['A3','A4','A5','A6','Q3','Q5','Q7','e-tron'],
+  'Mercedes-Benz':['A-Class','C-Class','E-Class','GLA','GLC','GLE'],
+  'Ford':         ['Focus','Fiesta','Mondeo','Kuga','Puma','EcoSport','Mustang','Mustang Mach-E'],
+  'Toyota':       ['Yaris','Corolla','RAV4','C-HR','Camry','Hilux','Aygo'],
+  'Hyundai':      ['i20','i30','Tucson','Santa Fe','Kona','i10'],
+  'Kia':          ['Ceed','Sportage','Sorento','Stonic','Niro','EV6'],
+  'Peugeot':      ['208','308','508','2008','3008','5008'],
+  'Renault':      ['Clio','Megane','Kadjar','Captur','Duster','Zoe'],
+  'Opel':         ['Astra','Corsa','Insignia','Crossland','Grandland'],
+  'Seat':         ['Ibiza','Leon','Ateca','Arona','Tarraco'],
+  'Dacia':        ['Sandero','Duster','Logan','Jogger'],
+  'Volvo':        ['V40','V60','V90','XC40','XC60','XC90'],
+  'Mazda':        ['Mazda2','Mazda3','Mazda6','CX-3','CX-5','CX-30','MX-5'],
+  'Honda':        ['Civic','Jazz','CR-V','HR-V','e'],
+  'Nissan':       ['Micra','Juke','Qashqai','X-Trail','Leaf','Navara'],
+  'Subaru':       ['Impreza','Outback','Forester','XV','BRZ'],
+  'Mitsubishi':   ['ASX','Outlander','Eclipse Cross','L200'],
+  'Fiat':         ['500','Punto','Tipo','Panda','Bravo'],
+  'Citroën':      ['C3','C4','C5 Aircross','Berlingo'],
+  'Jeep':         ['Renegade','Compass','Cherokee','Wrangler'],
+  'Land Rover':   ['Discovery','Defender','Range Rover','Freelander'],
+  'Porsche':      ['Cayenne','Macan','Panamera','911','Taycan'],
+};
+
+const CAR_COLORS = [
+  'Černá','Bílá','Šedá','Stříbrná','Modrá','Tmavě modrá','Červená',
+  'Zelená','Béžová','Hnědá','Zlatá','Oranžová','Žlutá','Fialová','Granátová',
+];
+
+// ─── Shared form UI (MUST be module-level — not inside a component) ────────────
+
+const inputCls = 'w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3664] bg-white text-gray-900';
+const selectCls = inputCls + ' appearance-none pr-8';
+
+function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+function SelectWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative">
+      {children}
+      <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+    </div>
+  );
+}
+
 // ─── Login Screen ─────────────────────────────────────────────────────────────
 
 function LoginScreen({ onLogin }: { onLogin: () => void }) {
@@ -228,26 +296,7 @@ function CarFormModal({
     });
   };
 
-  const Field = ({
-    label, required, children,
-  }: { label: string; required?: boolean; children: React.ReactNode }) => (
-    <div>
-      <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
-        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
-      </label>
-      {children}
-    </div>
-  );
-
-  const inputCls = 'w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3664] bg-white text-gray-900';
-  const selectCls = inputCls + ' appearance-none pr-8';
-
-  const SelectWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className="relative">
-      {children}
-      <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-    </div>
-  );
+  const modelSuggestions = CAR_MODELS[form.brand] ?? [];
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4">
@@ -369,6 +418,7 @@ function CarFormModal({
                   type="text" value={form.brand}
                   onChange={e => set('brand', e.target.value)}
                   placeholder="Škoda, BMW..."
+                  list="dl-brands"
                   required className={inputCls}
                 />
               </Field>
@@ -377,10 +427,25 @@ function CarFormModal({
                   type="text" value={form.model}
                   onChange={e => set('model', e.target.value)}
                   placeholder="Octavia 2.0 TDI"
+                  list="dl-models"
                   required className={inputCls}
                 />
               </Field>
             </div>
+
+            {/* Datalists */}
+            <datalist id="dl-brands">
+              {CAR_BRANDS.map(b => <option key={b} value={b} />)}
+            </datalist>
+            <datalist id="dl-models">
+              {modelSuggestions.length > 0
+                ? modelSuggestions.map(m => <option key={m} value={m} />)
+                : Object.values(CAR_MODELS).flat().map((m, i) => <option key={i} value={m} />)
+              }
+            </datalist>
+            <datalist id="dl-colors">
+              {CAR_COLORS.map(c => <option key={c} value={c} />)}
+            </datalist>
 
             {/* Price + Year */}
             <div className="grid grid-cols-2 gap-3">
@@ -458,6 +523,7 @@ function CarFormModal({
                   value={form.color ?? ''}
                   onChange={e => set('color', e.target.value)}
                   placeholder="Šedá, Černá..."
+                  list="dl-colors"
                   className={inputCls}
                 />
               </Field>
