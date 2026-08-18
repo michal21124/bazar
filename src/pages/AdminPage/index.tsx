@@ -291,10 +291,12 @@ function CarFormModal({
       // 3. In production: upload each to Netlify Blobs → replace base64 with URL
       if (!import.meta.env.DEV) {
         const urls = await Promise.all(compressed.map(uploadToStorage));
-        setImages(prev => {
-          // Replace the just-added base64 entries with their server URLs
-          const kept = prev.slice(0, prev.length - compressed.length);
-          return [...kept, ...urls].slice(0, 10);
+        // Replace the just-added base64 entries with their server URLs
+        setForm(f => {
+          const current = f.images ?? [];
+          const kept = current.slice(0, current.length - compressed.length);
+          const next = [...kept, ...urls].slice(0, 10);
+          return { ...f, image: next[0] ?? '', images: next };
         });
       }
     } finally {
