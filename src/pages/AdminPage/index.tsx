@@ -78,6 +78,25 @@ function compressFile(file: File): Promise<string> {
   });
 }
 
+// ─── Image upload to Netlify Blobs (production only) ─────────────────────────
+
+async function uploadToStorage(dataUrl: string): Promise<string> {
+  if (import.meta.env.DEV) return dataUrl; // dev: keep base64 locally
+  const token = import.meta.env.VITE_ADMIN_PASSWORD ?? '';
+  try {
+    const res = await fetch('/api/image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
+      body: JSON.stringify({ dataUrl }),
+    });
+    if (!res.ok) return dataUrl; // fallback: keep base64 if upload failed
+    const { url } = await res.json() as { url: string };
+    return url;
+  } catch {
+    return dataUrl; // fallback
+  }
+}
+
 // ─── Autocomplete data ────────────────────────────────────────────────────────
 
 const CAR_BRANDS = [
@@ -265,8 +284,19 @@ function CarFormModal({
     if (!files.length) return;
     setUploading(true);
     try {
+      // 1. Compress locally for preview
       const compressed = await Promise.all(files.map(compressFile));
+      // 2. Show thumbnails immediately (base64 preview)
       setImages([...allImages, ...compressed].slice(0, 10));
+      // 3. In production: upload each to Netlify Blobs → replace base64 with URL
+      if (!import.meta.env.DEV) {
+        const urls = await Promise.all(compressed.map(uploadToStorage));
+        setImages(prev => {
+          // Replace the just-added base64 entries with their server URLs
+          const kept = prev.slice(0, prev.length - compressed.length);
+          return [...kept, ...urls].slice(0, 10);
+        });
+      }
     } finally {
       setUploading(false);
       e.target.value = '';
