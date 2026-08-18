@@ -45,11 +45,37 @@ const emptyForm = (): Omit<CarType, 'id'> => ({
   gearbox: 'Automat',
   bodyType: 'SUV',
   image: '',
+  images: [],
   tag: '',
   power: undefined,
   color: '',
   description: '',
 });
+
+// ─── Image compression ────────────────────────────────────────────────────────
+
+function compressFile(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const src = ev.target?.result as string;
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX = 1200;
+        const ratio = Math.min(1, MAX / img.width);
+        canvas.width = Math.round(img.width * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.82));
+      };
+      img.onerror = reject;
+      img.src = src;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
 
 // ─── Login Screen ─────────────────────────────────────────────────────────────
 
@@ -148,33 +174,45 @@ function CarFormModal({
   const [form, setForm] = useState<Omit<CarType, 'id'>>(
     initial ? { ...initial } : emptyForm()
   );
-  const [previewError, setPreviewError] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const set = <K extends keyof typeof form>(key: K, val: (typeof form)[K]) =>
     setForm(f => ({ ...f, [key]: val }));
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      const src = ev.target?.result as string;
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const MAX = 800;
-        const ratio = Math.min(1, MAX / img.width);
-        canvas.width = Math.round(img.width * ratio);
-        canvas.height = Math.round(img.height * ratio);
-        const ctx = canvas.getContext('2d')!;
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        set('image', canvas.toDataURL('image/jpeg', 0.82));
-        setPreviewError(false);
-      };
-      img.src = src;
-    };
-    reader.readAsDataURL(file);
+  // All images as array (merge image + images, deduplicate)
+  const allImages: string[] = (() => {
+    const imgs = form.images && form.images.length > 0 ? form.images : [];
+    if (form.image && !imgs.includes(form.image)) return [form.image, ...imgs];
+    return imgs;
+  })();
+
+  const setImages = (imgs: string[]) => {
+    setForm(f => ({ ...f, image: imgs[0] ?? '', images: imgs }));
+  };
+
+  const handleFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    setUploading(true);
+    try {
+      const compressed = await Promise.all(files.map(compressFile));
+      setImages([...allImages, ...compressed].slice(0, 10));
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const removeImage = (idx: number) => {
+    setImages(allImages.filter((_, i) => i !== idx));
+  };
+
+  const moveFirst = (idx: number) => {
+    if (idx === 0) return;
+    const next = [...allImages];
+    next.splice(0, 0, next.splice(idx, 1)[0]);
+    setImages(next);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -242,43 +280,86 @@ function CarFormModal({
         <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 px-5 py-5">
           <div className="space-y-4">
 
-            {/* Image */}
-            <Field label="Fotografie">
-              <div className="flex gap-3">
-                <div className="flex-1 min-w-0">
-                  <input
-                    type="text"
-                    value={form.image.startsWith('data:') ? '' : form.image}
-                    onChange={e => { set('image', e.target.value); setPreviewError(false); }}
-                    placeholder="https://... (URL fotografie)"
-                    className={inputCls}
-                  />
-                  <p className="text-xs text-gray-400 mt-1">nebo</p>
-                  <button
-                    type="button"
-                    onClick={() => fileRef.current?.click()}
-                    className="flex items-center gap-2 text-xs text-[#1B3664] border border-[#1B3664] rounded-lg px-3 py-2 hover:bg-blue-50 transition-colors mt-1"
-                  >
-                    <Upload size={13} /> Nahrát ze zařízení
-                  </button>
-                  <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
-                </div>
-                {/* Preview */}
-                <div className="w-24 h-20 rounded-lg border border-gray-200 bg-gray-50 overflow-hidden flex-shrink-0">
-                  {form.image && !previewError ? (
-                    <img
-                      src={form.image}
-                      alt="preview"
-                      className="w-full h-full object-cover"
-                      onError={() => setPreviewError(true)}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Car size={22} className="text-gray-300" />
+            {/* Images */}
+            <Field label={`Fotografie (${allImages.length}/10)`}>
+              {/* URL input */}
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={allImages.length === 0 ? (form.image.startsWith('data:') ? '' : form.image) : ''}
+                  onChange={e => {
+                    const val = e.target.value.trim();
+                    if (val) setImages([val]);
+                    else setImages([]);
+                  }}
+                  placeholder="https://... (URL fotografie)"
+                  className={inputCls}
+                  disabled={allImages.length >= 10}
+                />
+              </div>
+
+              {/* Upload button */}
+              <div className="flex items-center gap-3 mt-2">
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  disabled={uploading || allImages.length >= 10}
+                  className="flex items-center gap-2 text-xs text-[#1B3664] border border-[#1B3664] rounded-lg px-3 py-2 hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Upload size={13} />
+                  {uploading ? 'Nahrávání…' : 'Nahrát fotky'}
+                </button>
+                <span className="text-xs text-gray-400">lze vybrat více najednou (max 10)</span>
+              </div>
+              <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={handleFiles} />
+
+              {/* Thumbnails */}
+              {allImages.length > 0 && (
+                <div className="mt-3 flex gap-2 flex-wrap">
+                  {allImages.map((src, idx) => (
+                    <div key={idx} className="relative group flex-shrink-0">
+                      <img
+                        src={src}
+                        alt={`foto ${idx + 1}`}
+                        className={`w-20 h-14 object-cover rounded-lg border-2 transition-all ${idx === 0 ? 'border-[#1B3664]' : 'border-gray-200 opacity-80 group-hover:opacity-100'}`}
+                      />
+                      {idx === 0 && (
+                        <span className="absolute bottom-0.5 left-0.5 text-[9px] font-bold bg-[#1B3664] text-white px-1 rounded leading-tight">
+                          COVER
+                        </span>
+                      )}
+                      {/* Remove */}
+                      <button
+                        type="button"
+                        onClick={() => removeImage(idx)}
+                        className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow"
+                      >
+                        <X size={10} />
+                      </button>
+                      {/* Set as cover */}
+                      {idx > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => moveFirst(idx)}
+                          className="absolute bottom-0.5 left-0.5 text-[9px] font-semibold bg-black/60 hover:bg-[#1B3664] text-white px-1 rounded leading-tight opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          cover
+                        </button>
+                      )}
                     </div>
+                  ))}
+                  {/* Add more slot */}
+                  {allImages.length < 10 && (
+                    <button
+                      type="button"
+                      onClick={() => fileRef.current?.click()}
+                      className="w-20 h-14 rounded-lg border-2 border-dashed border-gray-300 hover:border-[#1B3664] flex items-center justify-center text-gray-400 hover:text-[#1B3664] transition-colors flex-shrink-0"
+                    >
+                      <Plus size={20} />
+                    </button>
                   )}
                 </div>
-              </div>
+              )}
             </Field>
 
             {/* Brand + Model */}
