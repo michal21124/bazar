@@ -12,13 +12,18 @@ export default function ContactPage() {
     e.preventDefault();
     setStatus('sending');
     try {
-      const body = new URLSearchParams({
-        'form-name': 'contact',
-        ...fields,
-      });
-      const res = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() });
-      if (res.ok) { setStatus('sent'); setFields({ name: '', contact: '', message: '' }); }
-      else setStatus('error');
+      const formData = new FormData();
+      formData.append('form-name', 'contact');
+      formData.append('name', fields.name);
+      formData.append('contact', fields.contact);
+      formData.append('message', fields.message);
+      const res = await fetch('/', { method: 'POST', body: formData });
+      if (res.ok || res.redirected || res.status === 303) {
+        setStatus('sent');
+        setFields({ name: '', contact: '', message: '' });
+      } else {
+        setStatus('error');
+      }
     } catch { setStatus('error'); }
   };
 
