@@ -82,6 +82,20 @@ function saveToStorage(cars: Car[]) {
 
 // ─── API helpers (production only) ───────────────────────────────────────────
 
+/**
+ * Strip base64 images before syncing to API.
+ * URL images (http/https, /path) are kept; huge base64 blobs are dropped
+ * so they don't exceed Netlify's 6MB function body limit.
+ * The full data (with base64) stays in localStorage on the admin's device.
+ */
+function stripBase64(cars: Car[]): Car[] {
+  return cars.map(car => ({
+    ...car,
+    image:  car.image.startsWith('data:')  ? '' : car.image,
+    images: (car.images ?? []).map(img => img.startsWith('data:') ? '' : img).filter(Boolean),
+  }));
+}
+
 /** Fire-and-forget: push current cars array to Netlify Blobs via serverless fn */
 function syncToAPI(cars: Car[]): void {
   if (IS_DEV) return;
@@ -91,7 +105,7 @@ function syncToAPI(cars: Car[]): void {
       'Content-Type': 'application/json',
       'x-admin-token': ADMIN_TOKEN,
     },
-    body: JSON.stringify(cars),
+    body: JSON.stringify(stripBase64(cars)),
   }).catch(() => {/* silent fail — localStorage still holds data */});
 }
 
