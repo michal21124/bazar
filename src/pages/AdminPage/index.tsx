@@ -62,12 +62,13 @@ function compressFile(file: File): Promise<string> {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX = 1200;
-        const ratio = Math.min(1, MAX / img.width);
+        // 800px max — fits car cards well, keeps base64 ~60-100KB per photo
+        const MAX = 800;
+        const ratio = Math.min(1, MAX / Math.max(img.width, img.height));
         canvas.width = Math.round(img.width * ratio);
         canvas.height = Math.round(img.height * ratio);
         canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL('image/jpeg', 0.82));
+        resolve(canvas.toDataURL('image/jpeg', 0.72));
       };
       img.onerror = reject;
       img.src = src;
