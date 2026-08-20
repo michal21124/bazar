@@ -79,7 +79,7 @@ export function SplashScreen() {
             }
             className="text-center"
           >
-            <p className="text-white font-heading font-black text-3xl uppercase tracking-[0.2em] mb-3">
+            <p className="text-white font-brand text-2xl sm:text-3xl tracking-[0.08em] mb-3">
               Platinum Cars
             </p>
             <p className="text-white/45 text-xs font-bold uppercase tracking-[0.35em]">
