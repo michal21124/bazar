@@ -10,13 +10,13 @@ export function Hero() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="/hero-bg_3.jpg" 
-          alt="Letecký pohled na autobazar" 
-          className="w-full h-full object-cover object-center"
+          src="/passat-b7-1.jpg"
+          alt="Volkswagen Passat v nabídce Platinum Cars"
+          className="w-full h-full object-cover object-[62%_center]"
         />
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 top-[60%]" />
-        <div className="absolute inset-0 bg-black/20" /> {/* Subtle general overlay to ensure readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/15" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/80" />
       </div>
 
       {/* Content */}
@@ -61,20 +61,6 @@ export function Hero() {
           </div>
         </motion.div>
       </div>
-
-      {/* Hero Car */}
-      <motion.div
-        initial={{ opacity: 0, x: 200 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-        className="absolute bottom-[-20px] right-[-5%] z-30 hidden lg:block w-[45vw] max-w-[700px] pointer-events-none"
-      >
-        <img 
-          src="/hero-car.jpg" 
-          alt="BMW M8" 
-          className="w-full h-auto object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)] scale-x-[-1]"
-        />
-      </motion.div>
     </section>
   );
 }
