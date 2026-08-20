@@ -24,9 +24,9 @@ export function Hero() {
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/20 blur-[150px] rounded-full z-10 mix-blend-screen pointer-events-none" />
         
         <img 
-          src="/hero-bg.jpg" 
-          alt="Premium cars at dusk" 
-          className="w-full h-full object-cover object-center scale-105"
+          src="/passat-b7-1.jpg"
+          alt="Volkswagen Passat in the Platinum Cars offer"
+          className="w-full h-full object-cover object-[62%_center] scale-105"
         />
       </motion.div>
 
