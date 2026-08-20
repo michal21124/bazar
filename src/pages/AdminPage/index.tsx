@@ -199,7 +199,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
             <ShieldCheck size={28} className="text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white">Správa inzerce</h1>
-          <p className="text-slate-400 text-sm mt-1">Platinum Cars · Admin Panel</p>
+          <p className="text-slate-400 text-sm mt-1"><span className="font-brand text-xs tracking-[0.04em]">Platinum Cars</span> · Admin Panel</p>
         </div>
 
         <motion.form
@@ -877,7 +877,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               <ShieldCheck size={16} className="text-white" />
             </div>
             <div className="min-w-0">
-              <p className="font-bold text-gray-900 text-sm leading-tight truncate">Platinum Cars</p>
+              <p className="font-brand text-[11px] tracking-[0.02em] text-gray-900 leading-tight truncate">Platinum Cars</p>
               <p className="text-gray-400 text-xs hidden sm:block">Admin Panel</p>
             </div>
           </div>
