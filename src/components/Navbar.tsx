@@ -32,7 +32,7 @@ export function Navbar() {
         {/* Logo Left */}
         <Link href="/" className="flex items-center gap-3 group">
           <img src="/logo.png" alt="Platinum Cars Logo" className="w-[48px] h-[48px] object-contain transition-transform group-hover:scale-105" />
-          <span className="font-heading font-black text-2xl tracking-wide uppercase text-black">
+          <span className="font-brand text-xl xl:text-2xl tracking-[0.025em] text-black">
             Platinum Cars
           </span>
         </Link>
