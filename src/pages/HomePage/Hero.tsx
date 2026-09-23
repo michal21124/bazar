@@ -29,7 +29,7 @@ export function Hero() {
         >
           {/* Small Pill */}
           <div className="px-4 py-1.5 bg-white/20 backdrop-blur-sm text-white border border-white/30 text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-full mb-6 shadow-sm">
-            Prémiový Autobazar · Klíčany u Prahy
+            Prémiový Autobazar · Praha-Čakovice
           </div>
 
           {/* Huge Heading */}
