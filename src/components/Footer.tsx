@@ -37,7 +37,7 @@ export function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3 text-white/60 text-sm font-medium">
                 <MapPin className="text-primary shrink-0" size={18} />
-                <span>K pumpě<br/>250 69 Klíčany-Vodochody<br/>Czech Republic</span>
+                <span>Kostelecká 915<br/>196 00 Praha-Čakovice<br/>Czech Republic</span>
               </li>
               <li className="flex items-center gap-3 text-white/60 text-sm font-medium">
                 <Phone className="text-primary shrink-0" size={18} />
