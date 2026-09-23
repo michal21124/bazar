@@ -32,10 +32,10 @@ export function ContactSection() {
             <MapPin className="w-10 h-10 mb-6 text-white/90" />
             <h3 className="font-heading text-2xl font-bold uppercase mb-2">Kde nás najdete</h3>
             <p className="text-xl font-bold leading-snug">
-              K pumpě<br />
-              250 69 Klíčany-Vodochody
+              Kostelecká 915<br />
+              196 00 Praha-Čakovice
             </p>
-            <p className="mt-4 text-white/80 text-sm font-medium">Pouze 10 minut od Prahy</p>
+            <p className="mt-4 text-white/80 text-sm font-medium">Najdete nás v Praze-Čakovicích</p>
           </motion.div>
 
           <motion.div 
