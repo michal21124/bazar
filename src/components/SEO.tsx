@@ -4,7 +4,7 @@ const SITE_NAME  = 'Autobazar Platinum Cars';
 const SITE_URL   = 'https://platinumcars.cz'; // update after getting final domain
 const OG_IMAGE   = `${SITE_URL}/logo.png`;
 const DEFAULT_DESC =
-  'Autobazar Platinum Cars — prémiová ojetá vozidla v Klíčanech-Vodochodech u Prahy. ' +
+  'Autobazar Platinum Cars — prémiová ojetá vozidla na adrese Kostelecká 915, 196 00 Praha-Čakovice. ' +
   'Výkup, prodej a výměna vozů. ☎ +420 777 876 406';
 
 const BUSINESS = {
@@ -20,18 +20,13 @@ const BUSINESS = {
   description: DEFAULT_DESC,
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'K pumpě',
-    addressLocality: 'Klíčany-Vodochody',
-    postalCode: '250 69',
+    streetAddress: 'Kostelecká 915',
+    addressLocality: 'Praha-Čakovice',
+    postalCode: '196 00',
     addressCountry: 'CZ',
-    addressRegion: 'Středočeský kraj',
+    addressRegion: 'Praha',
   },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: 50.2097,
-    longitude: 14.3847,
-  },
-  hasMap: 'https://maps.google.com/?q=Klíčany-Vodochody+K+pumpě+250+69',
+  hasMap: 'https://www.google.com/maps/search/?api=1&query=Kosteleck%C3%A1%20915%2C%20196%2000%20Praha-%C4%8Cakovice',
   openingHoursSpecification: [
     { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday','Tuesday','Wednesday','Thursday','Friday'], opens: '09:00', closes: '18:00' },
     { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '09:00', closes: '14:00' },
@@ -87,7 +82,7 @@ export function SEO({
 }: Props) {
   const pageTitle = title
     ? `${title} | ${SITE_NAME}`
-    : `${SITE_NAME} – Prémiová ojetá auta | Klíčany u Prahy`;
+    : `${SITE_NAME} – Prémiová ojetá auta | Praha-Čakovice`;
   const canonicalUrl = canonical
     ? canonical.startsWith('http') ? canonical : `${SITE_URL}${canonical}`
     : SITE_URL;
@@ -140,10 +135,8 @@ export function SEO({
       }
 
       {/* Geo tags — helps local search */}
-      <meta name="geo.region"      content="CZ-ST" />
-      <meta name="geo.placename"   content="Klíčany-Vodochody, Praha" />
-      <meta name="geo.position"    content="50.2097;14.3847" />
-      <meta name="ICBM"            content="50.2097, 14.3847" />
+      <meta name="geo.region"      content="CZ-10" />
+      <meta name="geo.placename"   content="Praha-Čakovice" />
 
       {/* Open Graph */}
       <meta property="og:type"         content={type} />
