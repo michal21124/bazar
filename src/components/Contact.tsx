@@ -48,7 +48,7 @@ export function Contact() {
                 </div>
                 <div>
                   <div className="text-white/40 text-xs font-bold uppercase tracking-[0.2em] mb-2">Adresa</div>
-                  <div className="text-xl font-bold text-white tracking-wide">K pumpě, 250 69 Klíčany</div>
+                  <div className="text-xl font-bold text-white tracking-wide">Kostelecká 915, 196 00 Praha-Čakovice</div>
                 </div>
               </div>
             </div>
@@ -84,7 +84,7 @@ export function Contact() {
           >
             <div className="absolute inset-0 border-[4px] border-white/5 rounded-[3rem] z-20 pointer-events-none" />
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2551.488055627252!2d14.4258671!3d50.210515!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470becb201bc6c07%3A0xc48705a6390a883b!2sK%20pump%C4%9B%2C%20250%2069%20Kl%C3%AD%C4%8Dany!5e0!3m2!1scs!2scz!4v1700000000000!5m2!1scs!2scz" 
+              src="https://www.google.com/maps?q=Kosteleck%C3%A1%20915%2C%20196%2000%20Praha-%C4%8Cakovice&output=embed"
               width="100%" 
               height="100%" 
               style={{ border: 0, filter: 'invert(100%) hue-rotate(180deg) brightness(90%) contrast(120%) grayscale(20%)' }} 
