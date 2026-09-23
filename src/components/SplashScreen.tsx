@@ -83,7 +83,7 @@ export function SplashScreen() {
               Platinum Cars
             </p>
             <p className="text-white/45 text-xs font-bold uppercase tracking-[0.35em]">
-              Prémiová jízda. Jistá volba.
+              Auta na všechny prachy
             </p>
           </motion.div>
 
