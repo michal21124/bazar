@@ -11,9 +11,9 @@ export default function HomePage() {
     <div className="flex-1 w-full bg-white">
       <SEO
         canonical="/"
-        description="Autobazar Platinum Cars — prémiová ojetá vozidla v Klíčanech-Vodochodech u Prahy. Výkup, prodej a výměna vozů. Prémiové značky: BMW, Audi, Mercedes, Škoda. ☎ +420 777 876 406"
+        description="Autobazar Platinum Cars — prémiová ojetá vozidla na adrese Kostelecká 915, 196 00 Praha-Čakovice. Výkup, prodej a výměna vozů. Prémiové značky: BMW, Audi, Mercedes, Škoda. ☎ +420 777 876 406"
         faq={[
-          { question: 'Kde se Autobazar Platinum Cars nachází?', answer: 'Nacházíme se na adrese K pumpě, 250 69 Klíčany-Vodochody u Prahy, přibližně 20 km severně od centra Prahy.' },
+          { question: 'Kde se Autobazar Platinum Cars nachází?', answer: 'Najdete nás na adrese Kostelecká 915, 196 00 Praha-Čakovice.' },
           { question: 'Jak mohu kontaktovat autobazar Platinum Cars?', answer: 'Zavolejte nám na +420 777 876 406 nebo napište na Telegram: t.me/autonavse. Jsme k dispozici Po–Pá 9:00–18:00, So 9:00–14:00.' },
           { question: 'Vykupujete ojetá auta za hotové?', answer: 'Ano, vykupujeme všechny značky a typy vozů za nejvyšší možnou tržní cenu. Platba probíhá ihned na ruku nebo převodem.' },
           { question: 'Je možné vyměnit stávající auto za jiné?', answer: 'Samozřejmě. Přijímáme váš vůz jako část platby (trade-in) za nový vůz z naší nabídky. Vše vyřídíme na místě bez komplikací.' },
