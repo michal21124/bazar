@@ -8,7 +8,7 @@ export default function PodminkyPage() {
     <div className="flex-1 w-full bg-white flex flex-col pt-[88px]">
       <SEO
         title="Podmínky použití"
-        description="Obchodní podmínky a podmínky použití webu Autobazar Platinum Cars, se sídlem K pumpě, 250 69 Klíčany-Vodochody."
+        description="Obchodní podmínky a podmínky použití webu Autobazar Platinum Cars, se sídlem Kostelecká 915, 196 00 Praha-Čakovice."
         canonical="/podminky"
         noIndex
       />
@@ -40,7 +40,7 @@ export default function PodminkyPage() {
           <Section title="1. Provozovatel">
             <p>
               Provozovatelem webových stránek <strong>platinumcars.cz</strong> je autobazar Platinum Cars,
-              se sídlem K pumpě, 250 69 Klíčany-Vodochody, Česká republika.
+              se sídlem Kostelecká 915, 196 00 Praha-Čakovice, Česká republika.
               Kontakt: <a href="tel:+420777876406" className="text-primary hover:underline">+420 777 876 406</a>,
               e-mail: <a href="mailto:info@platinumcars.cz" className="text-primary hover:underline">info@platinumcars.cz</a>.
             </p>
