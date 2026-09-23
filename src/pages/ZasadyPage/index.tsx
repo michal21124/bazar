@@ -8,7 +8,7 @@ export default function ZasadyPage() {
     <div className="flex-1 w-full bg-white flex flex-col pt-[88px]">
       <SEO
         title="Zásady soukromí"
-        description="Zásady ochrany osobních údajů a GDPR informace – Autobazar Platinum Cars. Správce: K pumpě, 250 69 Klíčany-Vodochody."
+        description="Zásady ochrany osobních údajů a GDPR informace – Autobazar Platinum Cars. Správce: Kostelecká 915, 196 00 Praha-Čakovice."
         canonical="/zasady-soukromi"
         noIndex
       />
@@ -52,7 +52,7 @@ export default function ZasadyPage() {
             </p>
             <ul>
               <li><strong>Autobazar Platinum Cars</strong></li>
-              <li>Sídlo: K pumpě, 250 69 Klíčany-Vodochody, Česká republika</li>
+              <li>Sídlo: Kostelecká 915, 196 00 Praha-Čakovice, Česká republika</li>
               <li>Telefon: <a href="tel:+420777876406" className="text-primary hover:underline">+420 777 876 406</a></li>
               <li>E-mail: <a href="mailto:info@platinumcars.cz" className="text-primary hover:underline">info@platinumcars.cz</a></li>
               <li>Telegram: <a href="https://t.me/autonavse" target="_blank" rel="noreferrer" className="text-primary hover:underline">t.me/autonavse</a></li>
