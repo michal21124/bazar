@@ -11,7 +11,7 @@ export default function HomePage() {
     <div className="flex-1 w-full bg-white">
       <SEO
         canonical="/"
-        description="Autobazar Platinum Cars — prémiová ojetá vozidla na adrese Kostelecká 915, 196 00 Praha-Čakovice. Výkup, prodej a výměna vozů. Prémiové značky: BMW, Audi, Mercedes, Škoda. ☎ +420 777 876 406"
+        description="Autobazar Platinum Cars – Auta na všechny prachy. Kostelecká 915, 196 00 Praha-Čakovice. Výkup, prodej a výměna vozů. ☎ +420 777 876 406"
         faq={[
           { question: 'Kde se Autobazar Platinum Cars nachází?', answer: 'Najdete nás na adrese Kostelecká 915, 196 00 Praha-Čakovice.' },
           { question: 'Jak mohu kontaktovat autobazar Platinum Cars?', answer: 'Zavolejte nám na +420 777 876 406 nebo napište na Telegram: t.me/autonavse. Jsme k dispozici Po–Pá 9:00–18:00, So 9:00–14:00.' },
