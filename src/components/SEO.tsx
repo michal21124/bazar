@@ -4,7 +4,7 @@ const SITE_NAME  = 'Autobazar Platinum Cars';
 const SITE_URL   = 'https://platinumcars.cz'; // update after getting final domain
 const OG_IMAGE   = `${SITE_URL}/logo.png`;
 const DEFAULT_DESC =
-  'Autobazar Platinum Cars — prémiová ojetá vozidla na adrese Kostelecká 915, 196 00 Praha-Čakovice. ' +
+  'Autobazar Platinum Cars – Auta na všechny prachy. Kostelecká 915, 196 00 Praha-Čakovice. ' +
   'Výkup, prodej a výměna vozů. ☎ +420 777 876 406';
 
 const BUSINESS = {
@@ -82,7 +82,7 @@ export function SEO({
 }: Props) {
   const pageTitle = title
     ? `${title} | ${SITE_NAME}`
-    : `${SITE_NAME} – Prémiová ojetá auta | Praha-Čakovice`;
+    : `${SITE_NAME} – Auta na všechny prachy | Praha-Čakovice`;
   const canonicalUrl = canonical
     ? canonical.startsWith('http') ? canonical : `${SITE_URL}${canonical}`
     : SITE_URL;
