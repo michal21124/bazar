@@ -54,7 +54,7 @@ export function Hero() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-primary shadow-[0_0_10px_#1A73E8]"></span>
             </span>
-            <span className="text-xs md:text-sm font-bold tracking-[0.2em] text-white uppercase">Prémiový Autobazar u Prahy</span>
+            <span className="text-xs md:text-sm font-bold tracking-[0.2em] text-white uppercase">Auta na všechny prachy</span>
           </motion.div>
 
           <motion.h1 
