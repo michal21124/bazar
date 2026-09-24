@@ -11,7 +11,7 @@ export function Footer() {
           {/* Brand Info */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-6">
-              <img src="/logo-icon.png" alt="Platinum Cars Logo" className="w-[40px] h-[40px] object-contain brightness-0 invert" />
+              <img src="/logo.png" alt="Logo Platinum Cars" className="w-[48px] h-[48px] object-contain" />
               <span className="font-brand text-lg tracking-[0.025em] text-white">
                 Platinum Cars
               </span>
