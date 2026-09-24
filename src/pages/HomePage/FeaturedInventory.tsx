@@ -86,7 +86,6 @@ export function FeaturedInventory() {
               <CarCard
                 car={car}
                 index={index}
-                onClick={() => { window.location.href = '/vozy'; }}
               />
             </div>
           ))}
