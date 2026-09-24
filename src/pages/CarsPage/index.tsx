@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, SlidersHorizontal, Calendar, Settings2, Fuel, X, ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
 import { Link } from 'wouter';
-import { useCars, type Car } from '@/data/cars';
+import { useCars, getCarPath, getListingId, type Car } from '@/data/cars';
 import { SEO } from '@/components/SEO';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -148,7 +148,7 @@ export default function CarsPage() {
 
   const filtered = useMemo(() => {
     let r = allCars.filter(car => {
-      if (filters.search && !`${car.brand} ${car.model}`.toLowerCase().includes(filters.search.toLowerCase())) return false;
+      if (filters.search && !`${car.brand} ${car.model} ${getListingId(car)}`.toLowerCase().includes(filters.search.toLowerCase())) return false;
       if (filters.brands.length && !filters.brands.includes(car.brand)) return false;
       if (filters.priceMin && car.price < Number(filters.priceMin.replace(/\s/g, ''))) return false;
       if (filters.priceMax && car.price > Number(filters.priceMax.replace(/\s/g, ''))) return false;
@@ -505,7 +505,7 @@ export default function CarsPage() {
                      className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden flex flex-col"
                   >
                     {/* Image */}
-                     <Link href={`/vozy/${car.id}`} aria-label={`Detail vozu ${car.brand} ${car.model}`} className="relative h-[200px] bg-gray-100 overflow-hidden flex-shrink-0 block">
+                     <Link href={getCarPath(car)} aria-label={`Detail vozu ${car.brand} ${car.model}`} className="relative h-[200px] bg-gray-100 overflow-hidden flex-shrink-0 block">
                       <img
                         src={car.image}
                         alt={`${car.brand} ${car.model}`}
@@ -521,7 +521,8 @@ export default function CarsPage() {
                     {/* Content */}
                     <div className="p-4 flex-1 flex flex-col">
                       <div className="text-[10px] font-bold text-primary uppercase tracking-widest mb-0.5">{car.brand}</div>
-                      <h3 className="text-base font-bold text-black leading-snug mb-1 line-clamp-2"><Link href={`/vozy/${car.id}`} className="hover:text-primary">{car.model}</Link></h3>
+                      <h3 className="text-base font-bold text-black leading-snug mb-1 line-clamp-2"><Link href={getCarPath(car)} className="hover:text-primary">{car.model}</Link></h3>
+                      <p className="text-xs text-gray-500 mb-2">ID inzerátu: <span className="font-semibold text-gray-700">{getListingId(car)}</span></p>
 
                       {/* Specs row */}
                       <div className="flex items-center gap-3 text-xs text-gray-500 mb-3 mt-1 flex-wrap">
@@ -539,7 +540,7 @@ export default function CarsPage() {
                           {car.power && <div className="text-xs text-gray-400">{car.power} kW · {car.color}</div>}
                         </div>
                          <Link
-                           href={`/vozy/${car.id}`}
+                           href={getCarPath(car)}
                           className="px-3 py-1.5 bg-primary text-white text-xs font-bold uppercase rounded-lg hover:bg-[#152d52] transition-colors"
                         >
                           Detail
