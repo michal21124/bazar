@@ -68,7 +68,7 @@ function loadFromStorage(): Car[] {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as Car[];
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) return parsed;
     }
   } catch { /* ignore */ }
   return DEFAULT_CARS;
@@ -119,7 +119,7 @@ async function initFromAPI(): Promise<void> {
     const res = await fetch(API_URL);
     if (!res.ok) return;
     const apiCars: Car[] = await res.json();
-    if (Array.isArray(apiCars) && apiCars.length > 0) {
+    if (Array.isArray(apiCars)) {
       _cars = apiCars;
       saveToStorage(_cars);
       broadcast();
@@ -200,4 +200,19 @@ export function useCars(): Car[] {
   }, []);
 
   return cars;
+}
+
+/** A direct listing URL must wait for the shared inventory request before deciding it is missing. */
+export function useCarsReady(): boolean {
+  const [ready, setReady] = useState(IS_DEV);
+
+  useEffect(() => {
+    if (IS_DEV) return;
+    if (!_initPromise) _initPromise = initFromAPI();
+    let active = true;
+    _initPromise.then(() => { if (active) setReady(true); });
+    return () => { active = false; };
+  }, []);
+
+  return ready;
 }
