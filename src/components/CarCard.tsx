@@ -1,21 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Fuel, Settings2, Phone } from 'lucide-react';
+import { Calendar, Fuel, Settings2 } from 'lucide-react';
 import { Link } from 'wouter';
-
-interface Car {
-  id: number;
-  brand: string;
-  model: string;
-  price: number;
-  year: number;
-  mileage: number;
-  fuel: string;
-  gearbox: string;
-  image: string;
-  type: string;
-  tag?: string;
-}
+import type { Car } from '@/data/cars';
 
 const formatPrice = (price: number) => price.toLocaleString('cs-CZ') + ' Kč';
 
@@ -28,7 +15,7 @@ const getBadgeColor = (tag?: string) => {
   }
 };
 
-export function CarCard({ car, index, onClick }: { car: Car, index: number, onClick?: () => void }) {
+export function CarCard({ car, index }: { car: Car, index: number }) {
   return (
     <motion.div
       layout
@@ -36,11 +23,10 @@ export function CarCard({ car, index, onClick }: { car: Car, index: number, onCl
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      onClick={onClick}
-      className={`group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden ${onClick ? 'cursor-pointer' : ''}`}
+      className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden"
     >
       {/* Image Area */}
-      <div className="relative h-[220px] overflow-hidden bg-gray-100 flex-shrink-0">
+      <Link href={`/vozy/${car.id}`} className="relative h-[220px] overflow-hidden bg-gray-100 flex-shrink-0 block" aria-label={`Detail vozu ${car.brand} ${car.model}`}>
         <img 
           src={car.image} 
           alt={`${car.brand} ${car.model}`} 
@@ -53,12 +39,12 @@ export function CarCard({ car, index, onClick }: { car: Car, index: number, onCl
             {car.tag}
           </div>
         )}
-      </div>
+      </Link>
 
       {/* Content Area */}
       <div className="p-5 flex-1 flex flex-col bg-white">
         <div className="text-xs font-bold text-primary uppercase tracking-wider mb-1">{car.brand}</div>
-        <h4 className="text-xl font-semibold text-black leading-tight mb-3 line-clamp-1">{car.model}</h4>
+        <h4 className="text-xl font-semibold text-black leading-tight mb-3 line-clamp-1"><Link href={`/vozy/${car.id}`} className="hover:text-primary">{car.model}</Link></h4>
         
         <div className="mb-5">
           <div className="text-2xl font-bold text-primary tracking-tight">{formatPrice(car.price)}</div>
@@ -81,16 +67,9 @@ export function CarCard({ car, index, onClick }: { car: Car, index: number, onCl
         </div>
 
         {/* CTA Button */}
-        {onClick ? (
-          <a href="tel:+420777876406" onClick={e => e.stopPropagation()} className="w-full flex items-center justify-center gap-2 py-3 bg-primary text-white text-sm font-bold uppercase tracking-wider rounded-lg hover:bg-[#152d52] transition-colors">
-            <Phone size={18} />
-            Mám zájem
-          </a>
-        ) : (
-          <Link href="/vozy" className="w-full flex items-center justify-center py-3 bg-gray-100 text-black text-sm font-bold uppercase tracking-wider rounded-lg hover:bg-gray-200 transition-colors">
-            Detail vozu
-          </Link>
-        )}
+        <Link href={`/vozy/${car.id}`} className="w-full flex items-center justify-center py-3 bg-primary text-white text-sm font-bold uppercase tracking-wider rounded-lg hover:bg-[#152d52] transition-colors">
+          Detail vozu
+        </Link>
       </div>
     </motion.div>
   );
