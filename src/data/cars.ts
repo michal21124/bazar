@@ -20,6 +20,14 @@ export type Car = {
   description?: string;
 };
 
+export function getListingId(car: Car): string {
+  return String(car.id);
+}
+
+export function getCarPath(car: Car): string {
+  return `/vozy/${encodeURIComponent(getListingId(car))}`;
+}
+
 // ─── Default seed data ────────────────────────────────────────────────────────
 
 export const DEFAULT_CARS: Car[] = [
@@ -139,7 +147,12 @@ function broadcast() {
 // ─── Mutations ────────────────────────────────────────────────────────────────
 
 export function addCar(car: Omit<Car, 'id'>): Car {
-  const newCar: Car = { ...car, id: Date.now() };
+  // Six digits are easier to quote over the phone than a timestamp.
+  let id = 0;
+  while (id === 0 || _cars.some(c => c.id === id)) {
+    id = 100000 + (crypto.getRandomValues(new Uint32Array(1))[0] % 900000);
+  }
+  const newCar: Car = { ...car, id };
   _cars = [newCar, ..._cars];
   saveToStorage(_cars);
   broadcast();
