@@ -20,6 +20,7 @@ import { SplashScreen } from './components/SplashScreen';
 // Pages
 import HomePage from './pages/HomePage';
 import CarsPage from './pages/CarsPage';
+import CarDetailPage from './pages/CarDetailPage';
 import ContactPage from './pages/ContactPage';
 import PodminkyPage from './pages/PodminkyPage';
 import ZasadyPage from './pages/ZasadyPage';
@@ -50,6 +51,7 @@ function Router() {
         <RoutedErrorBoundary>
           <Switch>
             <Route path="/" component={HomePage} />
+            <Route path="/vozy/:id" component={CarDetailPage} />
             <Route path="/vozy" component={CarsPage} />
             <Route path="/kontakt" component={ContactPage} />
             <Route path="/podminky" component={PodminkyPage} />
