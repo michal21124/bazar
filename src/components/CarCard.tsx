@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Fuel, Settings2 } from 'lucide-react';
 import { Link } from 'wouter';
-import type { Car } from '@/data/cars';
+import { getCarPath, getListingId, type Car } from '@/data/cars';
 
 const formatPrice = (price: number) => price.toLocaleString('cs-CZ') + ' Kč';
 
@@ -26,7 +26,7 @@ export function CarCard({ car, index }: { car: Car, index: number }) {
       className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden"
     >
       {/* Image Area */}
-      <Link href={`/vozy/${car.id}`} className="relative h-[220px] overflow-hidden bg-gray-100 flex-shrink-0 block" aria-label={`Detail vozu ${car.brand} ${car.model}`}>
+      <Link href={getCarPath(car)} className="relative h-[220px] overflow-hidden bg-gray-100 flex-shrink-0 block" aria-label={`Detail vozu ${car.brand} ${car.model}`}>
         <img 
           src={car.image} 
           alt={`${car.brand} ${car.model}`} 
@@ -44,7 +44,8 @@ export function CarCard({ car, index }: { car: Car, index: number }) {
       {/* Content Area */}
       <div className="p-5 flex-1 flex flex-col bg-white">
         <div className="text-xs font-bold text-primary uppercase tracking-wider mb-1">{car.brand}</div>
-        <h4 className="text-xl font-semibold text-black leading-tight mb-3 line-clamp-1"><Link href={`/vozy/${car.id}`} className="hover:text-primary">{car.model}</Link></h4>
+        <h4 className="text-xl font-semibold text-black leading-tight mb-1 line-clamp-1"><Link href={getCarPath(car)} className="hover:text-primary">{car.model}</Link></h4>
+        <p className="text-xs text-gray-500 mb-3">ID inzerátu: <span className="font-semibold text-gray-700">{getListingId(car)}</span></p>
         
         <div className="mb-5">
           <div className="text-2xl font-bold text-primary tracking-tight">{formatPrice(car.price)}</div>
@@ -67,7 +68,7 @@ export function CarCard({ car, index }: { car: Car, index: number }) {
         </div>
 
         {/* CTA Button */}
-        <Link href={`/vozy/${car.id}`} className="w-full flex items-center justify-center py-3 bg-primary text-white text-sm font-bold uppercase tracking-wider rounded-lg hover:bg-[#152d52] transition-colors">
+        <Link href={getCarPath(car)} className="w-full flex items-center justify-center py-3 bg-primary text-white text-sm font-bold uppercase tracking-wider rounded-lg hover:bg-[#152d52] transition-colors">
           Detail vozu
         </Link>
       </div>
