@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import {
   Car as CarType,
+  getListingId,
   useCars,
   addCar,
   updateCar,
@@ -361,6 +362,15 @@ function CarFormModal({
         {/* Body */}
         <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 px-5 py-5">
           <div className="space-y-4">
+            <Field label="ID inzerátu">
+              {initial ? (
+                <input type="text" readOnly value={getListingId(initial)} className={`${inputCls} bg-gray-50 text-gray-600`} />
+              ) : (
+                <p className="text-sm text-gray-500 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
+                  ID se automaticky vytvoří po přidání vozu.
+                </p>
+              )}
+            </Field>
 
             {/* Images */}
             <Field label={`Fotografie (${allImages.length}/10)`}>
@@ -698,6 +708,7 @@ function CarCard({
               <p className="text-xs text-gray-500 mt-0.5">
                 {car.year} · {car.mileage.toLocaleString('cs-CZ')} km
               </p>
+              <p className="text-xs text-gray-500 mt-0.5">ID inzerátu: {getListingId(car)}</p>
             </div>
             {car.tag && (
               <span className={`text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${tagColor[car.tag] ?? 'bg-gray-100 text-gray-600'}`}>
@@ -759,6 +770,7 @@ function CarRow({
       <div className="min-w-0">
         <p className="font-semibold text-gray-900 text-sm truncate">{car.brand}</p>
         <p className="text-xs text-gray-500 truncate">{car.model}</p>
+        <p className="text-xs text-gray-500 truncate">ID inzerátu: {getListingId(car)}</p>
       </div>
 
       <span className="text-sm text-gray-700">{car.year}</span>
@@ -810,9 +822,9 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   };
 
   const handleAdd = (data: Omit<CarType, 'id'>) => {
-    addCar(data);
+    const car = addCar(data);
     setAddOpen(false);
-    showToast('Vůz byl úspěšně přidán ✓');
+    showToast(`Vůz byl přidán · ID inzerátu: ${getListingId(car)}`);
   };
 
   const handleUpdate = (data: Omit<CarType, 'id'>) => {
@@ -836,7 +848,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   };
 
   const filtered = cars.filter(c =>
-    `${c.brand} ${c.model}`.toLowerCase().includes(search.toLowerCase())
+    `${c.brand} ${c.model} ${getListingId(c)}`.toLowerCase().includes(search.toLowerCase())
   );
 
   const stats = {
@@ -948,7 +960,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Hledat značku nebo model..."
+                placeholder="Hledat značku, model nebo ID..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B3664]"
