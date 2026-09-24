@@ -3,7 +3,7 @@ import { Link, useParams } from 'wouter';
 import { ArrowLeft, Calendar, Check, ChevronLeft, ChevronRight, Copy, Fuel, Gauge, Phone } from 'lucide-react';
 import { SiTelegram } from 'react-icons/si';
 import { SEO } from '@/components/SEO';
-import { useCars, useCarsReady } from '@/data/cars';
+import { getCarPath, getListingId, useCars, useCarsReady } from '@/data/cars';
 
 const formatPrice = (price: number) => `${price.toLocaleString('cs-CZ')} Kč`;
 const formatMileage = (mileage: number) => `${mileage.toLocaleString('cs-CZ')} km`;
@@ -12,12 +12,12 @@ export default function CarDetailPage() {
   const { id } = useParams<{ id: string }>();
   const cars = useCars();
   const ready = useCarsReady();
-  const car = cars.find(item => String(item.id) === id);
+  const car = cars.find(item => getListingId(item) === id);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'error'>('idle');
   const photos = car ? [...new Set([car.image, ...(car.images ?? [])].filter(Boolean))] : [];
   const photo = photos[photoIndex] ?? photos[0];
-  const path = `/vozy/${id}`;
+  const path = car ? getCarPath(car) : `/vozy/${id}`;
 
   useEffect(() => {
     setPhotoIndex(0);
@@ -26,7 +26,7 @@ export default function CarDetailPage() {
 
   async function copyLink() {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      await navigator.clipboard.writeText(`${window.location.origin}${path}`);
       setCopyState('copied');
     } catch {
       setCopyState('error');
@@ -80,7 +80,7 @@ export default function CarDetailPage() {
         </Link>
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
           <div>
-            <p className="text-xs uppercase tracking-widest text-primary font-bold mb-1">{car.brand} · {car.year}</p>
+            <p className="text-xs uppercase tracking-widest text-primary font-bold mb-1">{car.brand} · {car.year} · ID inzerátu: {getListingId(car)}</p>
             <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl leading-none text-black">{title}</h1>
           </div>
           <p className="text-3xl sm:text-4xl font-black text-primary whitespace-nowrap">{formatPrice(car.price)}</p>
@@ -141,7 +141,7 @@ export default function CarDetailPage() {
                 {copyState === 'error' && (
                   <label className="text-sm text-gray-600">
                     Kopírování se nezdařilo. Zkopírujte odkaz ručně:
-                    <input readOnly onFocus={e => e.target.select()} value={window.location.href} className="mt-2 w-full rounded-lg border border-gray-300 p-2 text-xs text-black" />
+                    <input readOnly onFocus={e => e.target.select()} value={`${window.location.origin}${path}`} className="mt-2 w-full rounded-lg border border-gray-300 p-2 text-xs text-black" />
                   </label>
                 )}
               </div>
