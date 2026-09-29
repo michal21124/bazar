@@ -29,6 +29,22 @@ const SORT_OPTIONS = [
   { value: 'mileage-asc',   label: 'Nájezd: od nejmenšího' },
 ];
 
+// Group inconsistent brand spellings without changing the stored listings.
+function brandKey(value: string): string {
+  const normalized = value.trim().replace(/\s+/g, ' ').normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('cs-CZ');
+  if (normalized === 'vw') return 'volkswagen';
+  if (normalized === 'bmw x5') return 'bmw';
+  return normalized;
+}
+
+const BRAND_LABELS: Record<string, string> = {
+  volkswagen: 'Volkswagen',
+  skoda: 'Škoda',
+  kia: 'Kia',
+  bmw: 'BMW',
+};
+
 // ─── Initial state ────────────────────────────────────────────────────────────
 
 type Filters = {
@@ -130,8 +146,16 @@ export default function CarsPage() {
   const [sortBy, setSortBy] = useState('price-asc');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  // Dynamic brand list derived from current inventory
-  const BRANDS = useMemo(() => Array.from(new Set(allCars.map(c => c.brand))).sort(), [allCars]);
+  // Both the quick-select strip and sidebar share the same normalized options.
+  const BRANDS = useMemo(() => {
+    const labels = new Map<string, string>();
+    for (const car of allCars) {
+      const key = brandKey(car.brand);
+      if (key && !labels.has(key)) labels.set(key, BRAND_LABELS[key] ?? car.brand.trim());
+    }
+    return Array.from(labels, ([key, label]) => ({ key, label }))
+      .sort((a, b) => a.label.localeCompare(b.label, 'cs-CZ'));
+  }, [allCars]);
 
   const set = useCallback(<K extends keyof Filters>(key: K, val: Filters[K]) =>
     setFilters(f => ({ ...f, [key]: val })), []);
@@ -149,7 +173,7 @@ export default function CarsPage() {
   const filtered = useMemo(() => {
     let r = allCars.filter(car => {
       if (filters.search && !`${car.brand} ${car.model} ${getListingId(car)}`.toLowerCase().includes(filters.search.toLowerCase())) return false;
-      if (filters.brands.length && !filters.brands.includes(car.brand)) return false;
+      if (filters.brands.length && !filters.brands.includes(brandKey(car.brand))) return false;
       if (filters.priceMin && car.price < Number(filters.priceMin.replace(/\s/g, ''))) return false;
       if (filters.priceMax && car.price > Number(filters.priceMax.replace(/\s/g, ''))) return false;
       if (filters.yearFrom && car.year < Number(filters.yearFrom)) return false;
@@ -174,6 +198,8 @@ export default function CarsPage() {
   // Count helpers for checkboxes
   const countWith = (key: keyof Car, val: string) =>
     allCars.filter(c => String(c[key]) === val).length;
+  const countBrand = (key: string) =>
+    allCars.filter(c => brandKey(c.brand) === key).length;
   const countTag = (tag: string) =>
     allCars.filter(c => c.tag === tag).length;
 
@@ -188,7 +214,10 @@ export default function CarsPage() {
 
   // Active chips for display
   const activeChips: { label: string; clear: () => void }[] = [
-    ...filters.brands.map(b => ({ label: b, clear: () => toggleArr('brands', b) })),
+    ...filters.brands.map(b => ({
+      label: BRANDS.find(brand => brand.key === b)?.label ?? b,
+      clear: () => toggleArr('brands', b),
+    })),
     ...filters.fuels.map(f => ({ label: f, clear: () => toggleArr('fuels', f) })),
     ...filters.bodyTypes.map(b => ({ label: b, clear: () => toggleArr('bodyTypes', b) })),
     ...filters.tags.map(t => ({ label: t, clear: () => toggleArr('tags', t) })),
@@ -236,11 +265,11 @@ export default function CarsPage() {
           <div className="space-y-0.5">
             {BRANDS.map(brand => (
               <CheckRow
-                key={brand}
-                label={brand}
-                checked={filters.brands.includes(brand)}
-                count={countWith('brand', brand)}
-                onChange={() => toggleArr('brands', brand)}
+                key={brand.key}
+                label={brand.label}
+                checked={filters.brands.includes(brand.key)}
+                count={countBrand(brand.key)}
+                onChange={() => toggleArr('brands', brand.key)}
               />
             ))}
           </div>
@@ -406,15 +435,15 @@ export default function CarsPage() {
           </button>
           {BRANDS.map(brand => (
             <button
-              key={brand}
-              onClick={() => toggleArr('brands', brand)}
+              key={brand.key}
+              onClick={() => toggleArr('brands', brand.key)}
               className={`flex-none px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors ${
-                filters.brands.includes(brand)
+                filters.brands.includes(brand.key)
                   ? 'bg-primary border-primary text-white'
                   : 'border-gray-200 text-gray-600 hover:border-primary hover:text-primary bg-white'
               }`}
             >
-              {brand}
+              {brand.label}
             </button>
           ))}
         </div>
@@ -509,6 +538,8 @@ export default function CarsPage() {
                       <img
                         src={car.image}
                         alt={`${car.brand} ${car.model}`}
+                        loading={index < 3 ? 'eager' : 'lazy'}
+                        decoding="async"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       {car.tag && (

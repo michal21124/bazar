@@ -107,7 +107,7 @@ export default function CarDetailPage() {
               <div className="flex gap-2 mt-3 overflow-x-auto pb-2">
                 {photos.map((src, index) => (
                   <button type="button" key={src} onClick={() => setPhotoIndex(index)} aria-label={`Zobrazit fotku ${index + 1}`} className={`w-20 h-16 shrink-0 rounded-lg overflow-hidden border-2 ${index === photoIndex ? 'border-primary' : 'border-transparent'}`}>
-                    <img src={src} alt="" className="w-full h-full object-cover" />
+                    <img src={src} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>

@@ -57,25 +57,26 @@ const emptyForm = (): Omit<CarType, 'id'> => ({
 
 function compressFile(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = ev => {
-      const src = ev.target?.result as string;
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        // 800px max — fits car cards well, keeps base64 ~60-100KB per photo
-        const MAX = 800;
-        const ratio = Math.min(1, MAX / Math.max(img.width, img.height));
-        canvas.width = Math.round(img.width * ratio);
-        canvas.height = Math.round(img.height * ratio);
-        canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL('image/jpeg', 0.72));
-      };
-      img.onerror = reject;
-      img.src = src;
+    const src = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(src);
+      const canvas = document.createElement('canvas');
+      const ratio = Math.min(1, 800 / Math.max(img.width, img.height));
+      canvas.width = Math.max(1, Math.round(img.width * ratio));
+      canvas.height = Math.max(1, Math.round(img.height * ratio));
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return reject(new Error('Nelze zpracovat fotografii'));
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      // WebP is substantially smaller than JPEG at this resolution.
+      const webp = canvas.toDataURL('image/webp', 0.65);
+      resolve(webp.startsWith('data:image/webp;') ? webp : canvas.toDataURL('image/jpeg', 0.65));
     };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
+    img.onerror = () => {
+      URL.revokeObjectURL(src);
+      reject(new Error('Nelze načíst fotografii'));
+    };
+    img.src = src;
   });
 }
 
@@ -84,18 +85,15 @@ function compressFile(file: File): Promise<string> {
 async function uploadToStorage(dataUrl: string): Promise<string> {
   if (import.meta.env.DEV) return dataUrl; // dev: keep base64 locally
   const token = import.meta.env.VITE_ADMIN_PASSWORD ?? '';
-  try {
-    const res = await fetch('/api/image', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
-      body: JSON.stringify({ dataUrl }),
-    });
-    if (!res.ok) return dataUrl; // fallback: keep base64 if upload failed
-    const { url } = await res.json() as { url: string };
-    return url;
-  } catch {
-    return dataUrl; // fallback
-  }
+  const res = await fetch('/api/image', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
+    body: JSON.stringify({ dataUrl }),
+  });
+  if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+  const { url } = await res.json() as { url: string };
+  if (!url) throw new Error('Upload did not return a photo URL');
+  return url;
 }
 
 // ─── Autocomplete data ────────────────────────────────────────────────────────
@@ -264,6 +262,7 @@ function CarFormModal({
     initial ? { ...initial } : emptyForm()
   );
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
 
   const set = <K extends keyof typeof form>(key: K, val: (typeof form)[K]) =>
@@ -281,25 +280,21 @@ function CarFormModal({
   };
 
   const handleFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []);
+    const files = Array.from(e.target.files ?? []).slice(0, Math.max(0, 10 - allImages.length));
     if (!files.length) return;
     setUploading(true);
+    setUploadError('');
     try {
-      // 1. Compress locally for preview
       const compressed = await Promise.all(files.map(compressFile));
-      // 2. Show thumbnails immediately (base64 preview)
-      setImages([...allImages, ...compressed].slice(0, 10));
-      // 3. In production: upload each to Netlify Blobs → replace base64 with URL
-      if (!import.meta.env.DEV) {
-        const urls = await Promise.all(compressed.map(uploadToStorage));
-        // Replace the just-added base64 entries with their server URLs
-        setForm(f => {
-          const current = f.images ?? [];
-          const kept = current.slice(0, current.length - compressed.length);
-          const next = [...kept, ...urls].slice(0, 10);
-          return { ...f, image: next[0] ?? '', images: next };
-        });
+      const results = await Promise.allSettled(compressed.map(uploadToStorage));
+      const urls = results.filter((result): result is PromiseFulfilledResult<string> =>
+        result.status === 'fulfilled').map(result => result.value);
+      if (urls.length) setImages([...allImages, ...urls]);
+      if (urls.length !== files.length) {
+        setUploadError('Některé fotografie se nepodařilo nahrát. Zkuste je nahrát znovu.');
       }
+    } catch {
+      setUploadError('Fotografie se nepodařilo zpracovat. Zkuste jiný soubor.');
     } finally {
       setUploading(false);
       e.target.value = '';
@@ -404,6 +399,7 @@ function CarFormModal({
                 <span className="text-xs text-gray-400">lze vybrat více najednou (max 10)</span>
               </div>
               <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={handleFiles} />
+              {uploadError && <p role="alert" className="mt-2 text-xs text-red-600">{uploadError}</p>}
 
               {/* Thumbnails */}
               {allImages.length > 0 && (
