@@ -54,7 +54,7 @@ export default function ZasadyPage() {
               <li><strong>Autobazar Platinum Cars</strong></li>
               <li>Sídlo: Kostelecká 915, 196 00 Praha-Čakovice, Česká republika</li>
               <li>Telefon: <a href="tel:+420777876406" className="text-primary hover:underline">+420 777 876 406</a></li>
-              <li>E-mail: <a href="mailto:info@platinumcars.cz" className="text-primary hover:underline">info@platinumcars.cz</a></li>
+              <li>E-mail: <a href="mailto:bazarplatinumcars@gmail.com" className="text-primary hover:underline">bazarplatinumcars@gmail.com</a></li>
               <li>Telegram: <a href="https://t.me/autonavse" target="_blank" rel="noreferrer" className="text-primary hover:underline">t.me/autonavse</a></li>
             </ul>
           </Section>
@@ -131,8 +131,8 @@ export default function ZasadyPage() {
             </ul>
             <p>
               Žádost podejte e-mailem na{' '}
-              <a href="mailto:info@platinumcars.cz" className="text-primary hover:underline">
-                info@platinumcars.cz
+              <a href="mailto:bazarplatinumcars@gmail.com" className="text-primary hover:underline">
+                bazarplatinumcars@gmail.com
               </a>. Odpovíme do 30 dnů.
             </p>
           </Section>
@@ -178,8 +178,8 @@ export default function ZasadyPage() {
           <div className="mt-12 pt-8 border-t border-gray-100 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
             <p className="text-gray-400 text-sm">
               Dotazy ohledně ochrany osobních údajů:{' '}
-              <a href="mailto:info@platinumcars.cz" className="text-primary hover:underline">
-                info@platinumcars.cz
+              <a href="mailto:bazarplatinumcars@gmail.com" className="text-primary hover:underline">
+                bazarplatinumcars@gmail.com
               </a>
             </p>
             <Link

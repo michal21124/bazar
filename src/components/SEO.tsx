@@ -16,7 +16,7 @@ const BUSINESS = {
   logo: `${SITE_URL}/logo.png`,
   image: `${SITE_URL}/logo.png`,
   telephone: '+420777876406',
-  email: 'info@platinumcars.cz',
+  email: 'bazarplatinumcars@gmail.com',
   description: DEFAULT_DESC,
   address: {
     '@type': 'PostalAddress',

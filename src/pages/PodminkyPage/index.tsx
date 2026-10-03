@@ -42,7 +42,7 @@ export default function PodminkyPage() {
               Provozovatelem webových stránek <strong>platinumcars.cz</strong> je autobazar Platinum Cars,
               se sídlem Kostelecká 915, 196 00 Praha-Čakovice, Česká republika.
               Kontakt: <a href="tel:+420777876406" className="text-primary hover:underline">+420 777 876 406</a>,
-              e-mail: <a href="mailto:info@platinumcars.cz" className="text-primary hover:underline">info@platinumcars.cz</a>.
+              e-mail: <a href="mailto:bazarplatinumcars@gmail.com" className="text-primary hover:underline">bazarplatinumcars@gmail.com</a>.
             </p>
           </Section>
 
@@ -123,8 +123,8 @@ export default function PodminkyPage() {
           <div className="mt-12 pt-8 border-t border-gray-100">
             <p className="text-gray-400 text-sm">
               Máte-li dotazy k těmto podmínkám, kontaktujte nás na{' '}
-              <a href="mailto:info@platinumcars.cz" className="text-primary hover:underline">
-                info@platinumcars.cz
+              <a href="mailto:bazarplatinumcars@gmail.com" className="text-primary hover:underline">
+                bazarplatinumcars@gmail.com
               </a>.
             </p>
           </div>
